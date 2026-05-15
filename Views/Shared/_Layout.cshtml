@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] — JuniorPower</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/app.css" />
+</head>
+<body>
+    <div class="app-wrapper">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <span class="logo-icon">⚡</span>
+                    <span class="logo-text">JuniorPower</span>
+                </div>
+                <div class="sidebar-subtitle">Entrenamiento Intensivo 7 Días</div>
+            </div>
+
+            <ul class="sidebar-nav">
+                <li class="nav-section-label">Principal</li>
+                <li>
+                    <a href="/Dashboard" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")">
+                        <i class="bi bi-grid-1x2-fill"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/StudyPlan" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "StudyPlan" ? "active" : "")">
+                        <i class="bi bi-journal-bookmark-fill"></i>
+                        <span>Plan de Estudio</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Tasks" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Tasks" ? "active" : "")">
+                        <i class="bi bi-check2-square"></i>
+                        <span>Tareas</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Progress" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Progress" ? "active" : "")">
+                        <i class="bi bi-bar-chart-fill"></i>
+                        <span>Progreso</span>
+                    </a>
+                </li>
+
+                <li class="nav-section-label">Recursos</li>
+                <li>
+                    <a href="/Resources/AiGuide" class="sidebar-link @(ViewContext.RouteData.Values["action"]?.ToString() == "AiGuide" ? "active" : "")">
+                        <i class="bi bi-robot"></i>
+                        <span>Cómo usar AI</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Resources/Architecture" class="sidebar-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Architecture" ? "active" : "")">
+                        <i class="bi bi-diagram-3-fill"></i>
+                        <span>Arquitectura</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-progress-mini">
+                    <div class="d-flex justify-content-between mb-1">
+                        <small class="text-muted">Progreso general</small>
+                        <small class="text-accent" id="sidebar-percent">0%</small>
+                    </div>
+                    <div class="progress" style="height: 4px;">
+                        <div class="progress-bar bg-accent" id="sidebar-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <button class="btn btn-ghost sidebar-toggle" id="sidebarToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+                <div class="top-bar-title">@ViewData["Title"]</div>
+                <div class="top-bar-right">
+                    <span class="badge-day">Semana 1 de 1</span>
+                </div>
+            </header>
+
+            <div class="page-content">
+                @RenderBody()
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/app.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,92 @@
+@model List<JuniorPower.Models.StudyTask>
+@{
+    ViewData["Title"] = "Tareas";
+    int? filterDay = ViewBag.FilterDay;
+}
+
+<div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+    <div class="filter-tabs">
+        <a href="/Tasks" class="filter-tab @(filterDay == null ? "active" : "")">Todos</a>
+        @for (int d = 1; d <= 7; d++)
+        {
+            var current = d;
+            <a href="/Tasks?day=@current" class="filter-tab @(filterDay == current ? "active" : "")">Día @current</a>
+        }
+    </div>
+</div>
+
+@{
+    var grouped = Model.GroupBy(t => new { t.StudyDayId, t.StudyDay.DayNumber, t.StudyDay.Title, t.StudyDay.Icon });
+}
+
+@foreach (var group in grouped.OrderBy(g => g.Key.DayNumber))
+{
+    var tasks = group.ToList();
+    var done = tasks.Count(t => t.IsCompleted);
+    var total = tasks.Count;
+    var pct = total > 0 ? (int)((double)done / total * 100) : 0;
+
+    <div class="card-dark mb-4">
+        <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+            <div class="d-flex align-items-center gap-2">
+                <span>@group.Key.Icon</span>
+                <span class="day-badge">Día @group.Key.DayNumber</span>
+                <h6 class="mb-0 fw-semibold">@group.Key.Title</h6>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <small class="text-muted">@done / @total</small>
+                <form method="post" action="/Tasks/ResetDay/@group.Key.DayNumber" style="display:inline">
+                    <button type="submit" class="btn btn-ghost btn-sm text-muted"
+                            onclick="return confirm('¿Resetear el progreso del Día @group.Key.DayNumber?')">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="progress mb-3" style="height: 3px;">
+            <div class="progress-bar bg-accent" style="width: @pct%"></div>
+        </div>
+
+        <div class="task-list">
+            @foreach (var task in tasks.OrderBy(t => t.OrderIndex))
+            {
+                <div class="task-item @(task.IsCompleted ? "task-item--done" : "")" id="task-@task.Id">
+                    <button class="task-toggle" onclick="toggleTask(@task.Id)" title="Toggle">
+                        <i class="bi @(task.IsCompleted ? "bi-check-circle-fill text-success" : "bi-circle")"></i>
+                    </button>
+                    <div class="task-content">
+                        <div class="task-title">@task.Title</div>
+                        @if (!string.IsNullOrEmpty(task.Description))
+                        {
+                            <div class="task-desc">@task.Description</div>
+                        }
+                    </div>
+                    <span class="task-category task-category--@task.Category.ToString().ToLower()">
+                        @task.Category
+                    </span>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@section Scripts {
+<script>
+    async function toggleTask(taskId) {
+        const res = await fetch('/Tasks/Toggle/' + taskId, { method: 'POST' });
+        const data = await res.json();
+
+        const item = document.getElementById('task-' + taskId);
+        const icon = item.querySelector('.task-toggle i');
+
+        if (data.isCompleted) {
+            item.classList.add('task-item--done');
+            icon.className = 'bi bi-check-circle-fill text-success';
+        } else {
+            item.classList.remove('task-item--done');
+            icon.className = 'bi bi-circle';
+        }
+    }
+</script>
+}

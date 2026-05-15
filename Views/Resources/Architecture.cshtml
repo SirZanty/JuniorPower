@@ -1,0 +1,219 @@
+@{
+    ViewData["Title"] = "Arquitectura Moderna Básica";
+}
+
+<div class="mb-4">
+    <p class="text-muted">Arquitectura no es complejidad. Es organización. Aprende a organizar código de forma que cualquier desarrollador lo entienda.</p>
+</div>
+
+<div class="row g-4">
+    <!-- Vertical Slice Architecture -->
+    <div class="col-12">
+        <div class="card-dark">
+            <h5 class="fw-semibold mb-2">
+                <i class="bi bi-layers-fill text-accent"></i> Vertical Slice Architecture
+            </h5>
+            <p class="text-muted mb-4">En vez de separar por capas (Controller → Service → Repository), separas por <strong>features</strong>. Cada feature tiene todo lo que necesita.</p>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="arch-comparison arch-comparison--bad">
+                        <div class="arch-comparison-title text-danger">
+                            <i class="bi bi-x-circle"></i> Arquitectura por Capas (Tradicional)
+                        </div>
+                        <pre class="arch-code">Controllers/
+  UserController.cs
+  OrderController.cs
+Services/
+  UserService.cs
+  OrderService.cs
+Repositories/
+  UserRepository.cs
+  OrderRepository.cs
+Models/
+  User.cs
+  Order.cs</pre>
+                        <div class="text-muted small mt-2">
+                            Para modificar una feature, tocas 4+ archivos en 4 carpetas distintas.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="arch-comparison arch-comparison--good">
+                        <div class="arch-comparison-title text-success">
+                            <i class="bi bi-check-circle"></i> Vertical Slice (Moderno)
+                        </div>
+                        <pre class="arch-code">Features/
+  Users/
+    UsersController.cs
+    UserViewModel.cs
+    GetUsers.cs
+    CreateUser.cs
+  Orders/
+    OrdersController.cs
+    OrderViewModel.cs
+    GetOrders.cs</pre>
+                        <div class="text-muted small mt-2">
+                            Toda la feature está junta. Fácil de encontrar, modificar y eliminar.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estructura de esta app -->
+    <div class="col-md-6">
+        <div class="card-dark">
+            <h6 class="fw-semibold mb-3 text-accent">
+                <i class="bi bi-folder2-open"></i> Estructura de esta Aplicación
+            </h6>
+            <div class="file-tree">
+                <div class="file-tree-item file-tree-item--folder">📁 JuniorPower/</div>
+                <div class="file-tree-item file-tree-item--folder ps-3">📁 Features/ <span class="badge-mini">Vertical Slices</span></div>
+                <div class="file-tree-item ps-4">📁 Dashboard/</div>
+                <div class="file-tree-item ps-5 text-muted">DashboardController.cs</div>
+                <div class="file-tree-item ps-4">📁 StudyPlan/</div>
+                <div class="file-tree-item ps-5 text-muted">StudyPlanController.cs</div>
+                <div class="file-tree-item ps-4">📁 Tasks/</div>
+                <div class="file-tree-item ps-5 text-muted">TasksController.cs</div>
+                <div class="file-tree-item ps-4">📁 Progress/</div>
+                <div class="file-tree-item ps-5 text-muted">ProgressController.cs</div>
+                <div class="file-tree-item ps-4">📁 Resources/</div>
+                <div class="file-tree-item ps-5 text-muted">ResourcesController.cs</div>
+                <div class="file-tree-item file-tree-item--folder ps-3">📁 Data/ <span class="badge-mini">Base de datos</span></div>
+                <div class="file-tree-item ps-4 text-muted">AppDbContext.cs</div>
+                <div class="file-tree-item ps-4 text-muted">SeedData.cs</div>
+                <div class="file-tree-item file-tree-item--folder ps-3">📁 Models/ <span class="badge-mini">Entidades</span></div>
+                <div class="file-tree-item ps-4 text-muted">StudyDay.cs</div>
+                <div class="file-tree-item ps-4 text-muted">StudyTask.cs</div>
+                <div class="file-tree-item file-tree-item--folder ps-3">📁 Views/ <span class="badge-mini">Pantallas</span></div>
+                <div class="file-tree-item file-tree-item--folder ps-3">📁 wwwroot/ <span class="badge-mini">CSS / JS</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CQRS básico -->
+    <div class="col-md-6">
+        <div class="card-dark">
+            <h6 class="fw-semibold mb-3 text-info">
+                <i class="bi bi-arrow-left-right"></i> CQRS Básico
+            </h6>
+            <p class="text-muted small mb-3">CQRS = Command Query Responsibility Segregation. Suena complejo, es simple.</p>
+
+            <div class="cqrs-box mb-3">
+                <div class="cqrs-header text-info">Query (Leer datos)</div>
+                <div class="text-muted small">Solo lee datos. No modifica nada. Siempre retorna algo.</div>
+                <pre class="arch-code mt-2">// Ejemplo: GetUsers.cs
+public class GetUsersQuery { }
+
+public class GetUsersHandler {
+  public List&lt;User&gt; Handle(GetUsersQuery q) {
+    return _db.Users.ToList(); // Solo lectura
+  }
+}</pre>
+            </div>
+
+            <div class="cqrs-box">
+                <div class="cqrs-header text-warning">Command (Modificar datos)</div>
+                <div class="text-muted small">Modifica datos. No retorna datos (o retorna solo el ID).</div>
+                <pre class="arch-code mt-2">// Ejemplo: CreateUser.cs
+public class CreateUserCommand {
+  public string Name { get; set; }
+  public string Email { get; set; }
+}
+
+public class CreateUserHandler {
+  public int Handle(CreateUserCommand cmd) {
+    var user = new User { Name = cmd.Name };
+    _db.Users.Add(user);
+    _db.SaveChanges();
+    return user.Id; // Solo el ID
+  }
+}</pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Principios básicos -->
+    <div class="col-12">
+        <div class="card-dark">
+            <h5 class="fw-semibold mb-4">
+                <i class="bi bi-stars text-accent"></i> Principios de Clean Code
+            </h5>
+            <div class="row g-3">
+                @{
+                    var principles = new[]
+                    {
+                        new { Name = "Single Responsibility", Icon = "🎯", Desc = "Cada clase hace UNA sola cosa. Si tu clase hace muchas cosas, divídela.", Good = "UserController solo maneja HTTP de usuarios", Bad = "UserController + envía emails + genera PDFs" },
+                        new { Name = "Nombres descriptivos", Icon = "📝", Desc = "El código debe leerse como inglés (o español). Sin abreviaciones raras.", Good = "GetActiveUsersByCity()", Bad = "getUsrActCty()" },
+                        new { Name = "Funciones cortas", Icon = "✂️", Desc = "Si una función tiene más de 20 líneas, probablemente hace demasiado.", Good = "ValidateEmail() + SaveUser() + SendWelcomeEmail()", Bad = "ProcessUser() con 80 líneas" },
+                        new { Name = "No duplicar código (DRY)", Icon = "♻️", Desc = "Don't Repeat Yourself. Si copias y pegas código, algo está mal.", Good = "Método reutilizable ValidateAge(age)", Bad = "Misma validación en 5 controllers distintos" },
+                        new { Name = "Fail fast", Icon = "⚡", Desc = "Valida primero, ejecuta después. Retorna errores lo antes posible.", Good = "if (user == null) throw ... al inicio", Bad = "Usar user.Name 50 líneas después sin validar" },
+                        new { Name = "Comentarios solo cuando necesarios", Icon = "💬", Desc = "El código bien escrito no necesita comentarios. Si necesitas muchos, reescríbelo.", Good = "// Workaround para bug de SQLite en Linux", Bad = "// Este método obtiene los usuarios de la base de datos" }
+                    };
+                }
+                @foreach (var p in principles)
+                {
+                    <div class="col-md-6">
+                        <div class="principle-card">
+                            <div class="principle-header">
+                                <span>@p.Icon</span>
+                                <span class="fw-semibold">@p.Name</span>
+                            </div>
+                            <p class="text-muted small mb-2">@p.Desc</p>
+                            <div class="principle-examples">
+                                <div class="principle-good">
+                                    <i class="bi bi-check text-success"></i> @p.Good
+                                </div>
+                                <div class="principle-bad">
+                                    <i class="bi bi-x text-danger"></i> @p.Bad
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Request flow -->
+    <div class="col-12">
+        <div class="card-dark">
+            <h5 class="fw-semibold mb-4">
+                <i class="bi bi-arrow-right-circle-fill text-accent"></i> Flujo de una Request HTTP
+            </h5>
+            <div class="request-flow">
+                <div class="flow-step">
+                    <div class="flow-step-icon">🌐</div>
+                    <div class="flow-step-label">Browser / Client</div>
+                    <div class="flow-step-desc">GET /users/1</div>
+                </div>
+                <div class="flow-arrow"><i class="bi bi-arrow-right"></i></div>
+                <div class="flow-step">
+                    <div class="flow-step-icon">🔀</div>
+                    <div class="flow-step-label">Router</div>
+                    <div class="flow-step-desc">Mapea URL a Controller</div>
+                </div>
+                <div class="flow-arrow"><i class="bi bi-arrow-right"></i></div>
+                <div class="flow-step">
+                    <div class="flow-step-icon">🎮</div>
+                    <div class="flow-step-label">Controller</div>
+                    <div class="flow-step-desc">Valida, llama lógica</div>
+                </div>
+                <div class="flow-arrow"><i class="bi bi-arrow-right"></i></div>
+                <div class="flow-step">
+                    <div class="flow-step-icon">🗄️</div>
+                    <div class="flow-step-label">Database</div>
+                    <div class="flow-step-desc">Lee/Escribe datos</div>
+                </div>
+                <div class="flow-arrow"><i class="bi bi-arrow-right"></i></div>
+                <div class="flow-step">
+                    <div class="flow-step-icon">📤</div>
+                    <div class="flow-step-label">Response</div>
+                    <div class="flow-step-desc">JSON / HTML + Status</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

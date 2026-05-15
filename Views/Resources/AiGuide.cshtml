@@ -1,0 +1,175 @@
+@{
+    ViewData["Title"] = "Cómo usar AI correctamente";
+}
+
+<div class="mb-4">
+    <div class="alert-warning-custom">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span>AI es una herramienta, no un reemplazo de tu cerebro. Úsala mal y dejarás de aprender.</span>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Cómo SÍ usar AI -->
+    <div class="col-lg-6">
+        <div class="card-dark h-100">
+            <div class="d-flex align-items-center gap-2 mb-4">
+                <div class="icon-circle bg-success-subtle">
+                    <i class="bi bi-check-circle-fill text-success"></i>
+                </div>
+                <h5 class="mb-0 fw-semibold text-success">Cómo SÍ usar AI</h5>
+            </div>
+
+            <div class="ai-tip-list">
+                <div class="ai-tip ai-tip--good">
+                    <div class="ai-tip-title">Pedir explicaciones</div>
+                    <div class="ai-tip-desc">Cuando no entiendes un concepto, pídele que te lo explique de 3 formas distintas.</div>
+                </div>
+                <div class="ai-tip ai-tip--good">
+                    <div class="ai-tip-title">Pedir debugging</div>
+                    <div class="ai-tip-desc">Muéstrale el error y pídele que te explique POR QUÉ ocurre, no solo cómo solucionarlo.</div>
+                </div>
+                <div class="ai-tip ai-tip--good">
+                    <div class="ai-tip-title">Pedir ejercicios</div>
+                    <div class="ai-tip-desc">Pídele ejercicios de práctica sobre temas específicos. Tú los resuelves solo.</div>
+                </div>
+                <div class="ai-tip ai-tip--good">
+                    <div class="ai-tip-title">Pedir revisión de código</div>
+                    <div class="ai-tip-desc">Escribe el código tú solo y luego pídele que lo revise y señale mejoras.</div>
+                </div>
+                <div class="ai-tip ai-tip--good">
+                    <div class="ai-tip-title">Pedir analogías</div>
+                    <div class="ai-tip-desc">Si no entiendes algo técnico, pídele que lo explique con analogías del mundo real.</div>
+                </div>
+                <div class="ai-tip ai-tip--good">
+                    <div class="ai-tip-title">Verificar tu entendimiento</div>
+                    <div class="ai-tip-desc">Explícale tú a la AI lo que entendiste y pídele que corrija lo que está mal.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cómo NO usar AI -->
+    <div class="col-lg-6">
+        <div class="card-dark h-100">
+            <div class="d-flex align-items-center gap-2 mb-4">
+                <div class="icon-circle bg-danger-subtle">
+                    <i class="bi bi-x-circle-fill text-danger"></i>
+                </div>
+                <h5 class="mb-0 fw-semibold text-danger">Cómo NO usar AI</h5>
+            </div>
+
+            <div class="ai-tip-list">
+                <div class="ai-tip ai-tip--bad">
+                    <div class="ai-tip-title">Copiar y pegar código</div>
+                    <div class="ai-tip-desc">Si copias sin entender, no aprendes nada. El código no es tuyo y no lo podrás mantener.</div>
+                </div>
+                <div class="ai-tip ai-tip--bad">
+                    <div class="ai-tip-title">Depender totalmente de prompts</div>
+                    <div class="ai-tip-desc">"Dame el código completo de X" — esto mata tu capacidad de resolver problemas.</div>
+                </div>
+                <div class="ai-tip ai-tip--bad">
+                    <div class="ai-tip-title">Pedir soluciones sin intentarlo</div>
+                    <div class="ai-tip-desc">Primero lucha 20 minutos con el problema. Solo entonces pide ayuda.</div>
+                </div>
+                <div class="ai-tip ai-tip--bad">
+                    <div class="ai-tip-title">Usar AI para errores simples</div>
+                    <div class="ai-tip-desc">Los errores comunes hay que resolverlos tú mismo. Lee el stack trace antes de pedir ayuda.</div>
+                </div>
+                <div class="ai-tip ai-tip--bad">
+                    <div class="ai-tip-title">Generar todo automáticamente</div>
+                    <div class="ai-tip-desc">Si la AI genera todo el proyecto, tú no hiciste nada. No puedes presentarlo como tuyo.</div>
+                </div>
+                <div class="ai-tip ai-tip--bad">
+                    <div class="ai-tip-title">No verificar el output</div>
+                    <div class="ai-tip-desc">La AI puede estar equivocada. Siempre verifica lo que te da contra la documentación oficial.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Prompts útiles -->
+<div class="card-dark mt-4">
+    <h5 class="fw-semibold mb-4">
+        <i class="bi bi-chat-dots-fill text-accent"></i> Prompts Útiles para Aprender
+    </h5>
+    <p class="text-muted mb-4">Copia estos prompts y úsalos en ChatGPT, Claude o cualquier AI. Son mejores que "¿cómo hago X?"</p>
+
+    <div class="prompts-grid">
+        @{
+            var prompts = new[]
+            {
+                new { Title = "Para entender un error", Icon = "🔴", Prompt = "Tengo este error: [pega el error]. NO me des la solución directamente. Primero explícame qué significa este error, por qué ocurre y qué debería buscar yo para solucionarlo." },
+                new { Title = "Para no recibir la solución", Icon = "🧠", Prompt = "Estoy aprendiendo [tema]. Tengo este problema: [describe el problema]. No me des la solución. Dame pistas progresivas. Primero una pista pequeña, y si la pido, una más grande." },
+                new { Title = "Para pedir ejercicios", Icon = "💪", Prompt = "Soy principiante en [tema]. Dame 5 ejercicios prácticos de dificultad creciente. Sin soluciones. Solo los ejercicios. Quiero resolverlos yo primero." },
+                new { Title = "Para revisión de código", Icon = "👁️", Prompt = "Escrib esto yo solo: [pega tu código]. Revísalo como si fueras un senior developer. Señala: bugs potenciales, malas prácticas, qué mejorarías y por qué." },
+                new { Title = "Para entender stack traces", Icon = "📋", Prompt = "Tengo este stack trace: [pega el stack trace]. Explícame línea por línea qué significa. Empieza desde abajo. ¿Dónde está el error original?" },
+                new { Title = "Para verificar comprensión", Icon = "✅", Prompt = "Expliqué [concepto] a mi manera: [tu explicación]. ¿Está bien? ¿Qué está incorrecto o incompleto? No me expliques el concepto completo, solo corrige lo que esté mal." }
+            };
+        }
+        @foreach (var p in prompts)
+        {
+            <div class="prompt-card" onclick="copyPrompt(this)">
+                <div class="prompt-card-header">
+                    <span>@p.Icon</span>
+                    <span class="fw-semibold">@p.Title</span>
+                    <button class="btn btn-ghost btn-sm ms-auto copy-btn">
+                        <i class="bi bi-clipboard"></i>
+                    </button>
+                </div>
+                <div class="prompt-text">@p.Prompt</div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Regla de los 20 minutos -->
+<div class="card-dark mt-4 rule-box">
+    <div class="rule-header">
+        <span style="font-size: 2rem;">⏱️</span>
+        <h5 class="mb-0 fw-bold">La Regla de los 20 Minutos</h5>
+    </div>
+    <div class="row mt-3 g-3">
+        <div class="col-md-4">
+            <div class="rule-step">
+                <div class="rule-step-number">1</div>
+                <div>
+                    <div class="fw-semibold">Lucha solo</div>
+                    <div class="text-muted small">Intenta resolver el problema tú solo durante 20 minutos mínimo.</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="rule-step">
+                <div class="rule-step-number">2</div>
+                <div>
+                    <div class="fw-semibold">Lee la documentación</div>
+                    <div class="text-muted small">Busca en la documentación oficial antes de buscar en Stack Overflow.</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="rule-step">
+                <div class="rule-step-number">3</div>
+                <div>
+                    <div class="fw-semibold">Pide ayuda con contexto</div>
+                    <div class="text-muted small">Si pides ayuda, explica lo que ya intentaste. Eso acelera la solución.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+function copyPrompt(card) {
+    const text = card.querySelector('.prompt-text').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+        const btn = card.querySelector('.copy-btn i');
+        btn.className = 'bi bi-check-circle-fill text-success';
+        setTimeout(() => btn.className = 'bi bi-clipboard', 2000);
+    });
+}
+</script>
+}

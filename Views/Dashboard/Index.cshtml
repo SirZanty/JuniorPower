@@ -1,0 +1,141 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="dashboard-grid">
+
+    <!-- Stats Row -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-icon text-accent"><i class="bi bi-lightning-charge-fill"></i></div>
+            <div class="stat-value">@Model.ProgressPercent%</div>
+            <div class="stat-label">Progreso Total</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon text-success"><i class="bi bi-check-circle-fill"></i></div>
+            <div class="stat-value">@Model.CompletedTasks</div>
+            <div class="stat-label">Tareas Completadas</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon text-warning"><i class="bi bi-list-task"></i></div>
+            <div class="stat-value">@Model.TotalTasks</div>
+            <div class="stat-label">Tareas Totales</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon text-info"><i class="bi bi-calendar-check-fill"></i></div>
+            <div class="stat-value">@Model.DaysCompleted / @Model.TotalDays</div>
+            <div class="stat-label">Días Completados</div>
+        </div>
+    </div>
+
+    <!-- Main progress bar -->
+    <div class="card-dark">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0 fw-semibold">Progreso del Entrenamiento</h5>
+            <span class="badge bg-accent-soft text-accent">@Model.ProgressPercent% completado</span>
+        </div>
+        <div class="progress progress-lg mb-2">
+            <div class="progress-bar bg-accent progress-animated"
+                 role="progressbar"
+                 style="width: @Model.ProgressPercent%"
+                 aria-valuenow="@Model.ProgressPercent"
+                 aria-valuemin="0"
+                 aria-valuemax="100">
+            </div>
+        </div>
+        <div class="d-flex justify-content-between">
+            <small class="text-muted">Inicio</small>
+            <small class="text-muted">Backend Junior Sólido</small>
+        </div>
+    </div>
+
+    <!-- Days grid -->
+    <div>
+        <h5 class="section-title">Los 7 Días</h5>
+        <div class="days-grid">
+            @foreach (var day in Model.DaysProgress)
+            {
+                var isComplete = day.Completed == day.Total;
+                var cardClass = isComplete ? "day-card day-card--complete" : (day.Completed > 0 ? "day-card day-card--inprogress" : "day-card");
+                <a href="/StudyPlan/Day/@day.DayNumber" class="@cardClass">
+                    <div class="day-card-header">
+                        <span class="day-emoji">@day.Icon</span>
+                        <span class="day-number">Día @day.DayNumber</span>
+                        @if (isComplete)
+                        {
+                            <i class="bi bi-check-circle-fill text-success ms-auto"></i>
+                        }
+                    </div>
+                    <div class="day-card-title">@day.Title</div>
+                    <div class="day-card-progress">
+                        <div class="progress" style="height: 3px;">
+                            <div class="progress-bar @(isComplete ? "bg-success" : "bg-accent")"
+                                 style="width: @day.Percent%"></div>
+                        </div>
+                        <small class="text-muted mt-1">@day.Completed / @day.Total tareas</small>
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+
+    <!-- Skills section -->
+    <div class="card-dark">
+        <h5 class="mb-4 fw-semibold">Habilidades del Entrenamiento</h5>
+        <div class="skills-grid">
+            <div class="skill-badge @(Model.DaysCompleted >= 1 ? "skill-badge--unlocked" : "")">
+                <i class="bi bi-code-slash"></i>
+                <span>Programación</span>
+            </div>
+            <div class="skill-badge @(Model.DaysCompleted >= 2 ? "skill-badge--unlocked" : "")">
+                <i class="bi bi-cloud"></i>
+                <span>APIs REST</span>
+            </div>
+            <div class="skill-badge @(Model.DaysCompleted >= 3 ? "skill-badge--unlocked" : "")">
+                <i class="bi bi-database-fill"></i>
+                <span>Bases de Datos</span>
+            </div>
+            <div class="skill-badge @(Model.DaysCompleted >= 4 ? "skill-badge--unlocked" : "")">
+                <i class="bi bi-terminal-fill"></i>
+                <span>Linux & Git</span>
+            </div>
+            <div class="skill-badge @(Model.DaysCompleted >= 5 ? "skill-badge--unlocked" : "")">
+                <i class="bi bi-box"></i>
+                <span>Docker</span>
+            </div>
+            <div class="skill-badge @(Model.DaysCompleted >= 6 ? "skill-badge--unlocked" : "")">
+                <i class="bi bi-bug-fill"></i>
+                <span>Debugging</span>
+            </div>
+            <div class="skill-badge @(Model.DaysCompleted >= 7 ? "skill-badge--unlocked" : "")">
+                <i class="bi bi-trophy-fill"></i>
+                <span>Junior Sólido</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick actions -->
+    <div class="card-dark">
+        <h5 class="mb-4 fw-semibold">Acciones Rápidas</h5>
+        <div class="quick-actions">
+            <a href="/StudyPlan" class="quick-action-btn">
+                <i class="bi bi-journal-bookmark-fill"></i>
+                <span>Ver Plan Completo</span>
+            </a>
+            <a href="/Tasks" class="quick-action-btn">
+                <i class="bi bi-check2-square"></i>
+                <span>Mis Tareas</span>
+            </a>
+            <a href="/Resources/AiGuide" class="quick-action-btn">
+                <i class="bi bi-robot"></i>
+                <span>Cómo usar AI</span>
+            </a>
+            <a href="/Resources/Architecture" class="quick-action-btn">
+                <i class="bi bi-diagram-3-fill"></i>
+                <span>Arquitectura</span>
+            </a>
+        </div>
+    </div>
+
+</div>

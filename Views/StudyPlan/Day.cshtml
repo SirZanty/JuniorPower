@@ -1,0 +1,180 @@
+@model JuniorPower.Models.StudyDay
+@using System.Text.Json
+@{
+    ViewData["Title"] = $"Día {Model.DayNumber}: {Model.Title}";
+    var objectives = JsonSerializer.Deserialize<string[]>(Model.Objectives) ?? Array.Empty<string>();
+    var topics = JsonSerializer.Deserialize<string[]>(Model.Topics) ?? Array.Empty<string>();
+    var errors = JsonSerializer.Deserialize<string[]>(Model.ErrorsToProvoke) ?? Array.Empty<string>();
+    var completedTasks = Model.Tasks.Count(t => t.IsCompleted);
+    var totalTasks = Model.Tasks.Count;
+    var percent = totalTasks > 0 ? (int)((double)completedTasks / totalTasks * 100) : 0;
+}
+
+<div class="mb-4 d-flex align-items-center gap-3">
+    <a href="/StudyPlan" class="btn btn-ghost btn-sm"><i class="bi bi-arrow-left"></i> Volver al plan</a>
+    <div class="ms-auto d-flex gap-2">
+        @if (Model.DayNumber > 1)
+        {
+            <a href="/StudyPlan/Day/@(Model.DayNumber - 1)" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-chevron-left"></i> Día anterior
+            </a>
+        }
+        @if (Model.DayNumber < 7)
+        {
+            <a href="/StudyPlan/Day/@(Model.DayNumber + 1)" class="btn btn-accent btn-sm">
+                Día siguiente <i class="bi bi-chevron-right"></i>
+            </a>
+        }
+    </div>
+</div>
+
+<div class="day-detail-header card-dark mb-4">
+    <div class="d-flex align-items-center gap-3 mb-3">
+        <span style="font-size: 2.5rem;">@Model.Icon</span>
+        <div>
+            <div class="day-badge mb-1">Día @Model.DayNumber de 7</div>
+            <h2 class="mb-0 fw-bold">@Model.Title</h2>
+        </div>
+    </div>
+    <p class="text-muted mb-3">@Model.Description</p>
+    <div class="d-flex align-items-center gap-3">
+        <div class="progress flex-grow-1" style="height: 8px;">
+            <div class="progress-bar bg-accent progress-animated" style="width: @percent%"></div>
+        </div>
+        <span class="text-accent fw-semibold">@completedTasks / @totalTasks tareas</span>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Left column -->
+    <div class="col-lg-7">
+        <!-- Tareas del día -->
+        <div class="card-dark mb-4">
+            <h5 class="fw-semibold mb-4">
+                <i class="bi bi-check2-square text-accent"></i> Checklist del Día
+            </h5>
+            <div class="task-list" id="task-list">
+                @foreach (var task in Model.Tasks.OrderBy(t => t.OrderIndex))
+                {
+                    <div class="task-item @(task.IsCompleted ? "task-item--done" : "")" id="task-@task.Id">
+                        <button class="task-toggle"
+                                onclick="toggleTask(@task.Id)"
+                                title="@(task.IsCompleted ? "Marcar pendiente" : "Marcar completada")">
+                            <i class="bi @(task.IsCompleted ? "bi-check-circle-fill text-success" : "bi-circle")"></i>
+                        </button>
+                        <div class="task-content">
+                            <div class="task-title">@task.Title</div>
+                            @if (!string.IsNullOrEmpty(task.Description))
+                            {
+                                <div class="task-desc">@task.Description</div>
+                            }
+                        </div>
+                        <span class="task-category task-category--@task.Category.ToString().ToLower()">
+                            @task.Category
+                        </span>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Proyecto -->
+        <div class="project-box-large card-dark mb-4">
+            <h5 class="fw-semibold mb-3">
+                <i class="bi bi-code-square text-accent"></i> Proyecto del Día
+            </h5>
+            <div class="project-name mb-2">@Model.ProjectName</div>
+            <p class="text-muted">@Model.ProjectDescription</p>
+            <div class="alert-info-custom mt-3">
+                <i class="bi bi-info-circle-fill"></i>
+                <span>No uses AI para completar el proyecto. El objetivo es que tú entiendas cada línea.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right column -->
+    <div class="col-lg-5">
+        <!-- Objetivos -->
+        <div class="card-dark mb-4">
+            <h6 class="fw-semibold mb-3 text-accent">
+                <i class="bi bi-bullseye"></i> Objetivos del Día
+            </h6>
+            <ul class="objectives-list">
+                @foreach (var obj in objectives)
+                {
+                    <li>@obj</li>
+                }
+            </ul>
+        </div>
+
+        <!-- Temas -->
+        <div class="card-dark mb-4">
+            <h6 class="fw-semibold mb-3 text-info">
+                <i class="bi bi-book"></i> Temas a Cubrir
+            </h6>
+            <ul class="topics-list">
+                @foreach (var topic in topics)
+                {
+                    <li><i class="bi bi-dot"></i>@topic</li>
+                }
+            </ul>
+        </div>
+
+        <!-- Errores intencionales -->
+        <div class="card-dark mb-4 border-warning-subtle">
+            <h6 class="fw-semibold mb-3 text-warning">
+                <i class="bi bi-exclamation-triangle-fill"></i> Errores que DEBES Provocar
+            </h6>
+            <p class="text-muted small mb-3">Provocar errores a propósito es la mejor forma de aprender a resolverlos.</p>
+            <ul class="error-list">
+                @foreach (var error in errors)
+                {
+                    <li><code>@error</code></li>
+                }
+            </ul>
+        </div>
+
+        <!-- Meta del día -->
+        <div class="goal-box-large">
+            <div class="goal-icon"><i class="bi bi-trophy-fill"></i></div>
+            <div>
+                <div class="fw-semibold mb-1">Meta del Día</div>
+                <div class="text-muted">@Model.DayGoal</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    async function toggleTask(taskId) {
+        const res = await fetch('/Tasks/Toggle/' + taskId, { method: 'POST' });
+        const data = await res.json();
+
+        const item = document.getElementById('task-' + taskId);
+        const icon = item.querySelector('.task-toggle i');
+
+        if (data.isCompleted) {
+            item.classList.add('task-item--done');
+            icon.className = 'bi bi-check-circle-fill text-success';
+        } else {
+            item.classList.remove('task-item--done');
+            icon.className = 'bi bi-circle';
+        }
+
+        updateProgress();
+    }
+
+    function updateProgress() {
+        const items = document.querySelectorAll('.task-item');
+        const done = document.querySelectorAll('.task-item--done').length;
+        const total = items.length;
+        const pct = total > 0 ? Math.round(done / total * 100) : 0;
+
+        const bar = document.querySelector('.progress-bar');
+        if (bar) bar.style.width = pct + '%';
+
+        const label = document.querySelector('.text-accent.fw-semibold');
+        if (label) label.textContent = done + ' / ' + total + ' tareas';
+    }
+</script>
+}

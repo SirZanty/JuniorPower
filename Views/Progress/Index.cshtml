@@ -1,0 +1,106 @@
+@model List<JuniorPower.Features.Progress.DayProgressViewModel>
+@{
+    ViewData["Title"] = "Progreso";
+    int totalCompleted = ViewBag.TotalCompleted;
+    int totalTasks = ViewBag.TotalTasks;
+    int overallPct = totalTasks > 0 ? (int)((double)totalCompleted / totalTasks * 100) : 0;
+}
+
+<div class="card-dark mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0 fw-semibold">Progreso General</h5>
+        <span class="text-accent fw-bold fs-4">@overallPct%</span>
+    </div>
+    <div class="progress progress-lg mb-2">
+        <div class="progress-bar bg-accent progress-animated" style="width: @overallPct%"></div>
+    </div>
+    <div class="d-flex justify-content-between">
+        <small class="text-muted">@totalCompleted tareas completadas</small>
+        <small class="text-muted">@totalTasks tareas totales</small>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    @foreach (var day in Model)
+    {
+        <div class="col-md-6">
+            <div class="card-dark h-100">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <span>@day.Icon</span>
+                    <span class="day-badge">Día @day.DayNumber</span>
+                    @if (day.IsComplete)
+                    {
+                        <span class="badge bg-success-subtle text-success ms-auto">
+                            <i class="bi bi-check-circle-fill"></i> Completado
+                        </span>
+                    }
+                </div>
+                <h6 class="fw-semibold mb-3">@day.Title</h6>
+                <div class="progress mb-2" style="height: 6px;">
+                    <div class="progress-bar @(day.IsComplete ? "bg-success" : "bg-accent")"
+                         style="width: @day.Percent%"></div>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <small class="text-muted">@day.CompletedTasks / @day.TotalTasks tareas</small>
+                    <small class="text-accent fw-semibold">@day.Percent%</small>
+                </div>
+                @if (day.LastCompletedAt.HasValue)
+                {
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            <i class="bi bi-clock"></i>
+                            Última actividad: @day.LastCompletedAt.Value.ToString("dd/MM/yyyy HH:mm")
+                        </small>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Skills timeline -->
+<div class="card-dark">
+    <h5 class="fw-semibold mb-4">Camino al Junior Backend</h5>
+    <div class="skill-timeline">
+        @{
+            var skills = new[]
+            {
+                new { Day = 1, Name = "Programación Real", Icon = "💻", Desc = "Variables, loops, funciones, debugging" },
+                new { Day = 2, Name = "APIs REST", Icon = "🌐", Desc = "HTTP, endpoints, JSON, status codes" },
+                new { Day = 3, Name = "Bases de Datos", Icon = "🗄️", Desc = "SQL, SQLite, EF Core, relaciones" },
+                new { Day = 4, Name = "Linux & Git", Icon = "🐧", Desc = "Terminal, comandos, branches, GitHub" },
+                new { Day = 5, Name = "Docker", Icon = "🐳", Desc = "Contenedores, Dockerfile, Compose" },
+                new { Day = 6, Name = "Troubleshooting", Icon = "🔍", Desc = "Logs, debugging, metodología" },
+                new { Day = 7, Name = "Backend Junior", Icon = "🚀", Desc = "Proyecto completo, listo para trabajar" }
+            };
+        }
+        @foreach (var skill in skills)
+        {
+            var dayProgress = Model.FirstOrDefault(d => d.DayNumber == skill.Day);
+            var isUnlocked = dayProgress?.IsComplete ?? false;
+            var inProgress = (dayProgress?.CompletedTasks ?? 0) > 0 && !isUnlocked;
+
+            <div class="skill-timeline-item @(isUnlocked ? "unlocked" : (inProgress ? "in-progress" : "locked"))">
+                <div class="skill-timeline-icon">@skill.Icon</div>
+                <div class="skill-timeline-content">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="fw-semibold">@skill.Name</span>
+                        @if (isUnlocked)
+                        {
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                        }
+                        else if (inProgress)
+                        {
+                            <i class="bi bi-hourglass-split text-warning"></i>
+                        }
+                        else
+                        {
+                            <i class="bi bi-lock text-muted"></i>
+                        }
+                    </div>
+                    <small class="text-muted">@skill.Desc</small>
+                </div>
+            </div>
+        }
+    </div>
+</div>
